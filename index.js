@@ -1,33 +1,76 @@
+const Discord = require('discord.js')
+const client = new Discord.Client()
 
-const { Client, MessageEmbed } = require('discord.js');
-const client = new Client();
+const config = require('./config.json')
+const command = require('./command')
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-});
+  console.log('The client is ready!')
 
-client.on('message', msg => {
-  if (msg.content === 'ping') {
-    msg.reply('pong');
-  }
-  else if(msg.content === '%website'){
-    msg.channel.send('https://makeaton.org/');
-  }
-  else if(msg.content === '%register'){
-    msg.channel.send('register @ https://makeaton.org/registration.html')
-  }
-  else if(msg.content ==="%checkin"){
-      msg.channel.send('check in is opening soon')
-      
-  }
-  else if(msg.content ==="%rules"){
-      const package=new MessageEmbed ()
-      .setTitle('Rules')
-      
-      
-      msg.channel.send(package);
-  }
+  command(client, 'create_team', (message) => {
+    const name = message.content.replace('%create_team ', '')
+    const everyoneRole = message.guild.roles.cache.get(message.guild.id)
+    let role = message.guild.roles.cache.find(r => r.name === "hacker");
+
+    message.guild.channels.create(name, {
+      type: 'text',
   
-});
+    })
+    .then((channel) => {
+      const categoryId = '766326100754169896'
+      channel.setParent(categoryId)
+      channel.overwritePermissions(
+        [
+          {
+            id:role.id,
+            deny:['VIEW_CHANNEL']
+          },
+          {
+            id:message.author.id,
+            allow:['VIEW_CHANNEL']
+          }
+        ]
+      );
+      
+        
+      })
+    
+      message.guild.channels.create(name, {
+        type: 'voice',
+    
+      })
+      .then((channel) => {
+        const categoryId = '766326100754169896'
+        channel.setParent(categoryId)
+        channel.overwritePermissions(
+          [
+            {
+              id:role.id,
+              deny:['VIEW_CHANNEL']
+            },
+            {
+              id:message.author.id,
+              allow:['VIEW_CHANNEL']
+            }
+          ]
+        );
+        
+          
+        })
+  
+  
+      
+     message.channel.send("team formation succesfull")
+  })
 
-client.login('NzY1ODgzNDExMDMzODgyNjQ0.X4bSgg.Vky7sREvaulSShTMI4jkbAXAzkI');
+  command(client, 'website', (message) => {
+    message.channel.send("https://makeaton.org/");
+  })
+
+  command(client, 'register', (message) => {
+    message.channel.send("https://makeaton.org/");
+  })
+    
+})
+
+client.login(config.token)
