@@ -13,7 +13,7 @@ client.on('ready', () => {
     let role = message.guild.roles.cache.find(r => r.name === "hacker");
 
     message.guild.channels.create(name, {
-      type: 'text',
+      type: 'text',userLimit:5
   
     })
     .then((channel) => {
@@ -70,6 +70,24 @@ client.on('ready', () => {
   command(client, 'register', (message) => {
     message.channel.send("https://makeaton.org/");
   })
+
+  command(client, 'add', (message) => {
+    const id = message.content.replace('%add ', '');
+    message.channel.updateOverwrite(
+      id, { VIEW_CHANNEL: true }
+    )
+    .then((mssg)=>{
+      message.channel.send("successfully added your team member")
+    })
+    .catch((err)=>{
+      console.log(err);
+      message.channel.send("invalid id")
+    })
+  })
+  
+  
+
+
     
 })
 
